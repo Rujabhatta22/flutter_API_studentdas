@@ -1,29 +1,32 @@
-const express=require('express')
-const app=express()
-const mongoose=require('mongoose')
-const port=3000
-const path=require('path')
-const student_routes=require('./routes/student-route')
+const express = require("express");
+const port = 3000;
+const app = express();
+const mongoose = require("mongoose");
 
+mongoose.set("strictQuery", false);
+mongoose
+  .connect("mongodb://127.0.0.1:27017/objectbox_api")
 
+  .then(() => {
+    console.log("Connected to Mongodb Server");
+  })
+  .catch((err) => next(err));
 
-mongoose.connect('mongodb://127.0.0.1:27017/students')
-.then(()=>{
-    console.log('connected to mongoDB server')
-    app.listen(port,()=>{
-        console.log(`App is running on port:${port}`)
-    })
-}).catch((err)=>console.log(err))
+app.use((req, res, next) => {
+  next();
+});
 
-app.use((req,res,next)=>{
-    console.log(`${req.method} ${req.path}`)
-    next()
-})
-app.use(express.json())
+app.use(express.json());
+app.use("/user", require("./routes/user_routes"));
+app.use("/batch", require("./routes/batch_routes"));
+app.use("/course", require("./routes/course_routes"));
 
-app.use('/student',student_routes)
-app.use((err,req,res,next)=>{
-    console.log(err.stack)
-    if(res.statusCode==200)res.status(500)
-    res.json({"err":err.message})
-})
+app.listen(port, () => {
+  console.log("App is running on port 3000");
+});
+
+app.use((err, req, res, next) => {
+  if (res.statusCode == 200) res.status(500);
+  console.log(err);
+  res.status(500).json({ msg: err.message });
+});

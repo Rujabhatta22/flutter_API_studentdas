@@ -1,20 +1,33 @@
-const mongoose=require('mongoose')
-const userSchema=mongoose.Schema({
-    username:{
-        type:String,
-        required:true,
-        unique:true,
-        minLength:[5,'USername should be longer than 5 characters']
+const mongoose = require("mongoose")
 
+const Userschema =  mongoose.Schema({
+
+    firstname : {
+        type : String,
+        required : [true,"Firstname is Required"]
     },
-    password:{
-        type:String,
-        required:true,  
+    lastname  : {
+        type : String,
+        required : [true,"Lastname is Required"]
     },
-    role: {
-        type: String,
-        enum:['Admin','User'],
-        default:'User'
+    batch : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Batch"
+    },
+    course : [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref : "Course"
+    }],
+    username :{
+        type : String,
+        required : [true , "Username is Required"]
+    },
+    password : {
+        type : String,
+        
+    },
+    profilepicture :{
+        type:String
     }
-},{timestamps:true})
-module.exports=mongoose.model('User',userSchema)
+})
+module.exports =  mongoose.model("User",Userschema)
